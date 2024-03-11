@@ -7,7 +7,7 @@
   const username = getUrl.split("/")[4];
   const idFile = getUrl.split("/")[5];
   const nameFile = getUrl.split("/")[6];
-  const grabFile = "https://gist.githubusercontent.com/${username}/${idFile}/raw/${nameFile}";
+  const grabFile = `https://gist.githubusercontent.com/${username}/${idFile}/raw/${nameFile}`;
 
   async function gist_file() {
     await fetch_file(grabFile);
