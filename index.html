@@ -4,9 +4,9 @@
 
 <script>
   const getUrl = window.location.href;
-  const username = getUrl.split("/")[3];
-  const idFile = getUrl.split("/")[4];
-  const nameFile = getUrl.split("/")[5];
+  const username = getUrl.split("/")[4];
+  const idFile = getUrl.split("/")[5];
+  const nameFile = getUrl.split("/")[6];
   const grabFile = "https://gist.githubusercontent.com/${username}/${idFile}/raw/${nameFile}";
 
   async function gist_file() {
@@ -15,7 +15,7 @@
   document.addEventListener("DOMContentLoaded", gist_file());
 
   function types() {
-    if (nameFile.endsWith(".txt")) {
+    if (grabFile.endsWith(".txt")) {
       return "text/plain";
     } else if (grabFile.endsWith(".html")) {
       return "text/html";
