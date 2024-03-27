@@ -1,1 +1,401 @@
-<script src="https://cdn.jsdelivr.net/gh/richieredlo/gist/assert/open-file.js"></script>
+<scrip>
+  const urlString = window.location.href;
+  const {pathname} = initURL(urlString);
+  const {origin} = initURL(urlString);
+
+  let username = "";
+  let reponame = "";
+  let fileid = "";
+  let filename = "";
+
+  if (pathname.startsWith("/gist/")) {
+    username = pathname.split("/")?.[2];
+    fileid = pathname.split("/")?.[3];
+    filename = regEnd(pathname);
+    if (username !== "" && fileid !== "" && filename !== "") { 
+      openFile(`https://gist.githubusercontent.com/${username}/${fileid}/raw/${filename}`);
+      window.history.replaceState(null, null, `${origin}/gist/${username}/${fileid}/${filename}`);
+      document.title = filename;
+    }
+  } else if (pathname.startsWith("/gh/")) {
+    username = pathname.split("/")?.[2];
+    reponame = pathname.split("/")?.[3];
+    filename = regEnd(pathname);
+    var path = pathname.replace(`/gh/${username}/${reponame}/`, "");
+    var file = `https://raw.githubusercontent.com/${username}/${reponame}/master/${path}` || `https://raw.githubusercontent.com/${user}/${repo}/main/${path}`;
+    openFile(file);
+    var filepath = pathname.replace("/gh/", "");
+    window.history.replaceState(null, null, `${origin}/gh/${filepath}`);
+    document.title = filename;
+  } else {
+    insertHead(`
+       <meta charset="UTF-8">
+       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <link rel="icon" href="" type="image/x-icon">
+       <link rel="apple-touch-icon" href="">
+       <link rel="canonical" href="https://zaco.github.io/gist">
+       <title>OPEN FILES - Gist GitHub</title>
+
+       <style>
+         :root {
+           color-scheme: light dark;
+         }
+         * {
+           margin: 0;
+           padding: 0;
+           box-sizing: border-box;
+           line-height: 1.5;
+           font-family: Tahoma,Arial,sans-serif;
+         }
+         body {
+           width: 100vw;
+           height: 100vh;
+           height: 100svh;
+           padding: 25px;
+           text-align: center;
+         }
+         header h3 {
+           font-weight: 400;
+         }
+         header h3 a {
+           font-weight: 500;
+           text-decoration: none;
+         }
+         .container-content {
+           text-align: left;
+           width: 100%;
+           max-width: 55rem;
+           margin: 40px auto;
+           padding: 15px 20px;
+           display: flex;
+           flex-direction: row;
+           justify-content: space-between;
+           border: 1.5px solid #9E9E9E;
+           border-radius: 10px;
+           color: #E8EAF6;
+           background: #0C0E19;
+         }
+         .support-file {
+           width: 100%;
+           padding: 30px 0 0 20px;
+         }
+         .support-file ul {
+           padding-left: 30px;
+           font-size: 0.9em;
+         }
+         .support-file ul li {
+           padding-top: 5px;
+           padding-left: 10px; 
+         }
+         .generate-url {
+           text-align: center;
+           display: grid;
+           align-items: center;
+           justify-content: center;
+           width: 100%;
+           padding: 40px 25px 40px 0;
+         }
+         .generate-url input {
+           width: 50vw;
+           padding: 6px 10px;
+           display: flex;
+           margin: auto;
+           resize: none;
+           border: 0;
+           border-radius: 4px;
+           outline: 2px solid #9E9E9E;
+           margin-top: 10px;
+           color: #263238;
+           font-weight: 500;
+           background: #E8EAF6;
+           overflow: auto;
+         }
+         .generate-url input:focus {
+           outline: 2px solid #FF5722;
+         }
+         .generate-url button {
+           padding: 5px 10px;
+           margin: 15px;
+           color: #E8EAF6;
+           font-weight: 500;
+           border: 0;
+           border-radius: 4px;
+           outline: 1.6px solid #9E9E9E;
+           background: #283593;
+           -webkit-user-select: none;
+           -moz-user-select: none;
+           -ms-user-select: none;
+           user-select: none;
+           cursor: pointer;
+         }
+         .off {
+           opacity: 0.5;
+           pointer-events: none;
+         }
+         footer {
+           margin: 30% auto;
+           padding: 30px 0;
+           font-size: 0.8em;
+           font-weight: 400;
+         }
+         footer a {
+           font-weight: bold;
+           text-decoration: none;
+         }
+         @media (max-width:600px) {
+           .container-content {
+             flex-direction: column;
+           }
+           .generate-url {
+             margin-top: 50px;
+             padding: 40px 20px;
+           }
+           .generate-url input {
+             width: 70vw;
+             margin-top: 20px;
+           }
+         }
+       </style>
+    `);
+    insertBody(`
+      <header>
+        <p>
+          <h2>OPEN FILE</h2>
+          <br><br>
+          <h3>Get, Serve & View &nbsp; <small><a href="https://gist.github.com/" target="_blank">Gist.GitHub</a></small></h3>
+        </p>
+      </header>
+      <div class="container-content">
+        <div class="support-file">
+          <p><b>Supports files</b></p>
+          <br>
+          <ul>
+            <li>TXT</li>
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JS</li>
+            <li>JSON</li>
+            <li>XML</li>
+            <li>SVG</li>
+          </ul>
+        </div>
+        <div class="generate-url">
+          <h3><b>Generate URL</b></h3>
+          <br>
+          <small style="text-align:left;"><b>Example:</b>
+            <br><br>
+            <b style="margin-left:15px;"> gist</b>
+            <br>
+            <span style="margin-left:10px;white-space:nowrap;">&bull; https://gist.githubusercontent.com/user/id/raw/file.js</span>
+            <br>
+            <b style="margin-left:15px;">gh</b>
+            <br>
+            <span style="margin-left:10px;white-space:nowrap;">&bull; https://raw.githubusercontent.com/user/repo/main/file.js</span>
+          </small>
+          <br>
+          <b style="text-align:left;"><small>Input:</small></b>
+          <input id="input" type="url" placeholder="https://gist.githubusercontent.com/...">
+          <div>
+            <button id="btn-generate">Generate</button>
+          </div>
+          <br>
+          <b style="text-align:left;"><small>Ouput:</small></b>
+          <input id="output" type="url" placeholder="result..">
+          <div>
+            <button class="off" id="btn-copy">Copy Link</button>
+            <button class="off" id="btn-open">Open Link</button>
+          </div>
+        </div>
+      </div>
+      <footer>
+        <p>2024 &copy; OPEN FILE &nbsp;|&nbsp; <a href="https://github.com/" target="_blank">GitHub</a></p>
+      </footer>
+    `);
+
+    const input = document.querySelector("#input");
+    const output = document.querySelector("#output");
+    const btnGenerate = document.querySelector("#btn-generate");
+    const btnCopy = document.querySelector("#btn-copy");
+    const btnOpen = document.querySelector("#btn-open");
+
+    function inputValue() {
+      if (input.value.match("/gist.githubusercontent.com/") || input.value.match("/gist.github.com/")) {
+        var {pathname} = initURL(input.value);
+        username = pathname.split("/")?.[1];
+        fileid = pathname.split("/")?.[2];
+        filename = pathname.split("/").pop();
+        if (pathname.match("/raw/")) {
+          btnCopy.classList.remove("off");
+          btnOpen.classList.remove("off");
+          return `${origin}/gist/${username}/${fileid}/${filename}`;
+        } else {
+          return "Pathname not found. (/raw/)";
+        }
+      } else if (input.value.match("https://raw.githubusercontent.com/")) {
+        var {pathname} = initURL(input.value);
+        var url = initURL(input.value);
+        var user = pathname.split("/")?.[1];
+        var repo = pathname.split("/")?.[2];
+        var branch = pathname.match("master") || pathname.match("main");
+        var filepath = pathname.replace(`/${user}/${repo}/${branch}/`, "");
+        if (url.origin.match("/raw.")) {
+          btnCopy.classList.remove("off");
+          btnOpen.classList.remove("off");
+          return `${origin}/gh/${user}/${repo}/${filepath}`;
+        } else {
+          return "URL not match. (https://raw.)";
+        }
+      } else {
+        var {hostname} = initURL(input.value);
+        return `Invalid host.. (${hostname})`;
+      }
+    }
+
+    btnGenerate.addEventListener("click", ()=> {
+      if (input.value) {
+        output.value = inputValue();
+      }
+    });
+
+    input.addEventListener("keyup", ()=> {
+       output.value = "";
+       btnCopy.classList.add("off");
+       btnOpen.classList.add("off");
+    });
+    
+    btnCopy.addEventListener("click", ()=> {
+       
+    });
+    btnOpen.addEventListener("click", ()=> {
+       window.open(output.value, "_blank");
+    });
+  }
+
+  async function openFile(url) {
+    let mime = mimeTypes(url)+";charset=UTF-8";
+    await fetch(url)
+    .then(response => response.blob())
+    .then(data => {
+       var blob = new Blob([data], {type: mime});
+       var file = window.URL.createObjectURL(blob);
+       if (pathname.endsWith(".html")) {
+         insertFile(file);
+       } else {
+         convertFile(file);
+       }
+       window.onload =()=> {
+         window.URL.revokeObjectURL(file);
+       }
+    })
+    .catch(err => console.error(err));
+  }
+
+  function mimeTypes(ext) {
+    if (ext.endsWith(".text")) return "text/plain";
+    if (ext.endsWith(".html")) return "text/html";
+    if (ext.endsWith(".css")) return "text/css";
+    if (ext.endsWith(".js")) return "text/javascript";
+    if (ext.endsWith(".json")) return "application/json";
+    if (ext.endsWith(".xml")) return "text/xml";
+    if (ext.endsWith(".svg")) return "image/svg+xml";
+  }
+  
+  function regEnd(exp) {
+    filename = exp.split("/").pop();
+    if (filename.match(/.min/)) {
+      var name = filename.replace(filename.split(".")[1], "").replace(filename.split(".")[2], "").replace(/[.]/g, "");
+      var ext = filename.split(".")?.[2];
+      return `${name}.${ext}`;
+    } else {
+      return `${filename}`;
+    }
+  }
+
+  function insertFile(file) {
+    let dataFile = file;
+    insertHead(`
+      <meta name="color-scheme" content="light dark">
+      <style>
+       iframe {
+         margin: 0;
+         padding: 0;
+         width: 100vw;
+         height: 100vh;
+         height: 100svh;
+         border: 0;
+         outline: none;
+         background: transparent;
+       }
+      </style>
+      `);
+      var iframe = document.createElement("iframe");
+      iframe.src = dataFile;
+      insertChild(iframe);
+  }
+
+  function convertFile(file) {
+    let dataFile = file;
+    fetch(dataFile, {method: "GET", headers: {"content-type": mimeTypes(file)}})
+    .then(response => {
+      var length = response.headers.get("content-length");
+      var type = response.headers.get("content-type");
+      console.info("Content-Length: "+length+"\nContent-Type: "+type);
+      return response.text();
+    })
+    .then(data => {
+      insertHead(`
+        <meta name="color-scheme" content="light dark">
+        <style>
+         pre {
+           margin: 0;
+           padding: 0;
+           width: 100%;
+           height: 100%;
+           white-space: pre-wrap;
+           word-wrap: break-word;
+         }
+        </style>
+      `);
+      var elem = document.createElement("pre");
+      var dataText = document.createTextNode(data);
+      var conText = data.replace(/(?:(?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:(?<!\:|\\\|\')\/\/.*))|(\r\n|\n|\r)|^\s+|\s+$|\s+(?=\s)/gm, "");
+      if (pathname.match(/.min/)) {
+        insertText(elem, conText);
+      } else {
+        insertText(elem, dataText);
+      }
+      insertChild(elem);
+    })
+    .catch(err => console.error(err));
+  }
+
+  function initURL(url) {
+    return new URL(url);
+  }
+
+  function insertHead(elem) {
+    var docElem = document.documentElement;
+    var head = document.createElement("head");
+    head.insertAdjacentHTML("afterbegin", elem);
+    return docElem.append(head);
+  }
+  
+  function insertBody(elem) {
+    var docElem = document.documentElement;
+    var body = document.createElement("body");
+    body.insertAdjacentHTML("afterbegin", elem);
+    return docElem.append(body);
+  }
+
+  function insertChild(elem) {
+    var docElem = document.documentElement;
+    var body = document.createElement("body");
+    body.appendChild(elem);
+    return docElem.append(body);
+  }
+
+  function insertText(elem, text) {
+    return elem.prepend(text);
+  }
+</script>
