@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
   const urlString = window.location.href;
   const {pathname} = initURL(urlString);
   const {origin} = initURL(urlString);
@@ -294,7 +298,7 @@
     if (ext.endsWith(".text")) return "text/plain";
     if (ext.endsWith(".html")) return "text/html";
     if (ext.endsWith(".css")) return "text/css";
-    if (ext.endsWith(".js")) return "text/javascript";
+    if (ext.endsWith(".js")) return "application/javascript";
     if (ext.endsWith(".json")) return "application/json";
     if (ext.endsWith(".xml")) return "text/xml";
     if (ext.endsWith(".svg")) return "image/svg+xml";
@@ -335,7 +339,15 @@
 
   function convertFile(file) {
     let dataFile = file;
-    fetch(dataFile, {method: "GET", headers: {"content-type": mimeTypes(file)}})
+    fetch(dataFile, {
+      method: "HEAD",
+      headers: {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-type": mimeTypes(file)
+      }
+    })
     .then(response => {
       var length = response.headers.get("content-length");
       var type = response.headers.get("content-type");
@@ -381,19 +393,16 @@
   }
   
   function insertBody(elem) {
-    var docElem = document.documentElement;
-    var body = document.createElement("body");
-    body.insertAdjacentHTML("afterbegin", elem);
-    return docElem.append(body);
+    return document.body.insertAdjacentHTML("afterbegin", elem);
   }
 
   function insertChild(elem) {
-    var docElem = document.documentElement;
-    var body = document.createElement("body");
-    body.appendChild(elem);
-    return docElem.append(body);
+    return document.body.appendChild(elem);
   }
 
   function insertText(elem, text) {
     return elem.prepend(text);
   }
+</script>
+</body>
+</html>
